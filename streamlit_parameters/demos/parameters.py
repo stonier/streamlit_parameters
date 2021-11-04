@@ -148,12 +148,15 @@ def main():
 ##############################################################################
 
 
-# Entry point via the streamlit command line utility
+# Needed to enable console_main(). If you have a completely configured env.
+# you can run this directly via `streamlit run`. If not (e.g. Streamlit Cloud)
+# then you'll have to use the entry point in demo.py in the root of this package.
 if __name__ == "__main__":
     main()
 
 
-# Entry point as a python console script
+# Entry point as a python console script. Not just for convenience, this
+# enables a runnable demo to be packaged with e.g. a pip package.
 def console_main():
     filename = __file__
     sys.argv = ["streamlit", "run", filename]
