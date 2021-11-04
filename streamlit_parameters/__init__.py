@@ -20,6 +20,10 @@ from . import parameters  # noqa
 # Version
 ##############################################################################
 
-import pkg_resources
+# Update in setup.py as well
+__version__ = "0.1.0"
 
-__version__ = pkg_resources.require('streamlit_parameters')[0].version
+# import pkg_resources
+
+# Streamlit Cloud doesn't handle this one.
+# __version__ = pkg_resources.require('streamlit_parameters')[0].version
