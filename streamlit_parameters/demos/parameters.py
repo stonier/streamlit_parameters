@@ -6,10 +6,7 @@
 # Documentation
 ##############################################################################
 
-"""
-Demonstrates parameter reflection between streamlit widget configuration
-and url fields (via the session state under the hood).
-"""
+"""Demonstrates parameter reflection between widgets and the url query string."""
 
 ##############################################################################
 # Imports
@@ -18,6 +15,7 @@ and url fields (via the session state under the hood).
 import datetime
 import functools
 import sys
+import typing
 
 import streamlit
 import streamlit.cli
@@ -81,7 +79,7 @@ def main():
     streamlit.sidebar.date_input(
         label="Start Date",
         value=parameters.start_date.default,
-        min_value=today-datetime.timedelta(weeks=4),
+        min_value=today - datetime.timedelta(weeks=4),
         max_value=today,
         key=parameters.start_date.key,
         on_change=functools.partial(
@@ -91,7 +89,7 @@ def main():
     streamlit.sidebar.date_input(
         label="End Date",
         value=parameters.end_date.default,
-        min_value=today-datetime.timedelta(weeks=4),
+        min_value=today - datetime.timedelta(weeks=4),
         max_value=today,
         key=parameters.end_date.key,
         on_change=functools.partial(
@@ -122,7 +120,7 @@ def main():
     ####################
     # Usage
     ####################
-    streamlit.write(f"## Usage")
+    streamlit.write("## Usage")
     usage = f"**Foo**: {parameters.foo.value}  \n"
     usage += f"**Bar**: {parameters.bar.value}  \n"
     usage += f"**Start Date**: {parameters.start_date.value}  \n"
@@ -133,16 +131,16 @@ def main():
     ####################
     # Debugging
     ####################
-    streamlit.write(f"## Debugging")
+    streamlit.write("## Debugging")
 
-    streamlit.write(f"#### Query String")
+    streamlit.write("#### Query String")
     query_string: typing.Dict[str, str] = streamlit.experimental_get_query_params()
     streamlit.write(query_string)
 
-    streamlit.write(f"#### Parameters")
+    streamlit.write("#### Parameters")
     streamlit.write(parameters.as_dict())
 
-    streamlit.write(f"#### Session State")
+    streamlit.write("#### Session State")
     streamlit.write(streamlit.session_state)
 
 ##############################################################################

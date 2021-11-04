@@ -6,10 +6,7 @@
 # Documentation
 ##############################################################################
 
-"""
-Assistance for initialising and exporting the page configuration across the
-user provided defaults, session state, url query string and streamlit widgets.
-"""
+"""Parameter management for intialising and exporting the page configuration."""
 
 ##############################################################################
 # Imports

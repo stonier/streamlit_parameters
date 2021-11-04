@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# License: Woven Planet Holdings
+# License: BSD
+#   https://raw.githubusercontent.com/stonier/streamlit_parameters/devel/LICENSE
 #
-
 ##############################################################################
 # Imports
 ##############################################################################
