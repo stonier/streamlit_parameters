@@ -6,9 +6,7 @@
 # Documentation
 ##############################################################################
 
-"""
-Stub method for provoking the test suite.
-"""
+"""Stub method for provoking the test suite."""
 
 ##############################################################################
 # Implementations
@@ -16,7 +14,5 @@ Stub method for provoking the test suite.
 
 
 def gday():
-    """
-    Aussie, for 'hello'.
-    """
+    """Aussie, for 'hello'."""
     return "G'day!"

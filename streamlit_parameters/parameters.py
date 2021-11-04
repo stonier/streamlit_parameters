@@ -1,19 +1,12 @@
 #
-# License: Woven Planet Holdings
+# License: BSD
+#   https://raw.githubusercontent.com/stonier/streamlit_parameters/devel/LICENSE
 #
 ##############################################################################
 # Documentation
 ##############################################################################
 
-"""
-Utilities for managing the parameters relevant to configuring a particular
-view for a streamlit page. Typically, this is about initialising and
-exporting the current input widget configuration. The URL query string
-plays a large part in this to enable a URL copy-share-paste workflow so that
-you can easily share and/or reproduce the state of the interactive app
-that you are experiencing / seeing with other people.
-
-"""
+"""Machinery for initialisation and export of parameters relating to page configuration."""
 
 ##############################################################################
 # Imports
@@ -21,8 +14,9 @@ that you are experiencing / seeing with other people.
 
 import datetime
 import dateutil.parser
-import streamlit
 import typing
+
+import streamlit
 
 ##############################################################################
 # Support
@@ -30,33 +24,49 @@ import typing
 
 
 class Parameter(object):
-    """
-    Stores default, current and metadata about a parameter.
-    """
+    """Stores default, current and metadata about a parameter."""
+
     def __init__(self, key: str, default: typing.Any, touched: bool = False):
+        """
+        Initialise the parameter with defaults, state and metadata.
+
+        Args:
+            key: name of this parameter
+            default: initial value
+            touched: flagged for export or otherwise
+        """
         self.key = key
         self.default: typing.Any = default
         self.value: typing.Any = default
         self.touched: bool = touched
         self.to_str = str
 
-    def update(self, new_value):
-        """
-        Override the current value. Since it's no longer the default, flag it
+    def update(self, new_value: typing.Any):
+        """Override the current value.
+
+        Since it's no longer the default, flag it
         as touched so it gets embedded in URL queries.
+
+        Args:
+            new_value: duh, new value
         """
         self.value = new_value
         self.touched = True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        """Return the unique representation for the class.
+
+        Returns:
+            The unqiue string representation for the class.
+        """
         return f"Parameter(default={self.default},value={self.value},touched={self.touched})"
 
 
 class AttrDict(dict):
-    """
-    Convenience class that enables attribute access for dictionaries.
-    """
+    """Convenience class that enables attribute access for dictionaries."""
+
     def __init__(self, *args, **kwargs):
+        """Pass through initialisation to the dict class."""
         super(AttrDict, self).__init__(*args, **kwargs)
         self.__dict__ = self
 
@@ -68,7 +78,9 @@ class AttrDict(dict):
 
 class Parameters(object):
     """
-    What's in a URL? For a streamlit dashboard, not much. Once you've interacted
+    What's in a URL? For a streamlit dashboard, not much.
+
+    Once you've interacted
     with a dashboard in a myriad of way, sending someone the url for your
     dashboard doesn't help them very much - they won't see what you are seeing.
 
@@ -98,7 +110,7 @@ class Parameters(object):
 
     .. code-block::
 
-        parameters = streamlit_mercury_utilities.parameters.Parameters()
+        parameters = streamlit_parameters.parameters.Parameters()
         parameters.register_date_parameter(key="start_date", default_value=seven_days_ago)  # <-- 1
         streamlit.sidebar.date_input(
             value=parameters.start_date.default,  # <-- 2
@@ -142,7 +154,7 @@ class Parameters(object):
 
     .. code-block:: python
 
-        parameters = streamlit_mercury_utilities.parameters.Parameters()
+        parameters = streamlit_parameters.parameters.Parameters()
         with streamlit.sidebar:
             parameters.create_set_all_checkbox()
 
@@ -161,18 +173,21 @@ class Parameters(object):
     """
 
     def __init__(self):
+        """Initialise required session state variables."""
         # using an AttrDict here for convenient attribute referencing on a dict
         if "_parameters" not in streamlit.session_state:
             streamlit.session_state._parameters = AttrDict(dict())
             streamlit.session_state._parameters_set_all = False
 
     def __getattr__(self, key: str) -> Parameter:
-        """
-        Returns the parameter stored on the session state object. Lets you write:
+        """Return the parameter stored on the session state object.
+
+        This is a convenience that lets you access parameters as
+        attributes of the class:
 
         .. code-block:: python
 
-            parameters = streamlit_mercury_utilities.parameters.Parameters()
+            parameters = streamlit_parameters.parameters.Parameters()
             parameters.register_int_parameter(key="foo", default_value=5)
             parameters.foo.update(new_value=4)
             print(f"parameters.foo")
@@ -183,10 +198,27 @@ class Parameters(object):
 
     @staticmethod
     def is_set_all() -> bool:
+        """
+        Check the state of the flag that determines the export mode.
+
+        Either partial (overridden parameters) or full (all parameters).
+        """
         return streamlit.session_state._parameters_set_all
 
     @staticmethod
     def create_set_all_checkbox():
+        """
+        Return a convenience checkbox for interactively toggling the export mode.
+
+        .. code-block:: python
+
+            parameters = streamlit_parameters.parameters.Parameters()
+            with streamlit.sidebar:
+                parameters.create_set_all_checkbox()
+
+        Returns
+            A streamlit checkbox widget
+        """
         return streamlit.sidebar.checkbox(
             label="Set All Params in URL Query",
             value=False,
@@ -195,11 +227,18 @@ class Parameters(object):
 
     @staticmethod
     def as_dict():
+        """
+        Return a dictionary of all the parameters.
+
+        Returns:
+            An ordinary (attributeless) dictionary.
+        """
         return dict(streamlit.session_state._parameters.__dict__)
 
     @staticmethod
     def register_int_parameter(key: str, default_value: int):
-        """
+        """Register an int parameter.
+
         Register an int type parameter and initialise it from the url query
         string, or as a fallback, with the provided default value if the key is
         not present in the url query string.
@@ -222,6 +261,8 @@ class Parameters(object):
     @staticmethod
     def register_string_parameter(key: str, default_value: str):
         """
+        Register a string parameter.
+
         Register a string parameter and initialise it from the url query
         string, or as a fallback, with the provided default value if the key is
         not present in the url query string.
@@ -241,6 +282,8 @@ class Parameters(object):
     @staticmethod
     def register_date_parameter(key: str, default_value: datetime.date):
         """
+        Register a date parameter.
+
         Default string conversion produces url query fields of the form
         YYYY-MM-DD, e.g. 2021-11-01. This is satisfactory and corresponds
         to a strftime format of '%Y-%m-%d'.
@@ -262,6 +305,7 @@ class Parameters(object):
 
     @staticmethod
     def register_bool_parameter(key: str, default_value: bool):
+        """Register a bool parameter."""
         if Parameters._already_registered(key):
             return
         try:
@@ -277,7 +321,8 @@ class Parameters(object):
 
     @staticmethod
     def update_parameter_from_session_state(key: str):
-        """
+        """Connect widget updates with parameter / url changes.
+
         Use this method with streamlit widget on_change arguments to
         automatically synchronise widget variable changes to parameter changes.
 
@@ -299,10 +344,17 @@ class Parameters(object):
 
     @staticmethod
     def update_parameter(key: str, value: typing.Any):
+        """Update a single parameter.
+
+        Args:
+            key: parameter to update
+            value: the update
+        """
         streamlit.session_state._parameters[key].update(new_value=value)
 
     @staticmethod
     def set_url_fields():
+        """Reflect parameters to the url query string."""
         values = {}
         for key, parameter in streamlit.session_state._parameters.items():
             if Parameters.is_set_all() or parameter.touched:
@@ -317,8 +369,16 @@ class Parameters(object):
 
     @staticmethod
     def _fetch_url_field(key: str) -> str:
-        """
-        @raise KeyError: if the field does not exist
+        """Fetch a single field from the url query string.
+
+        Args:
+            key: parameter name
+
+        Returns:
+            the parameter value as a string (prior to any necessary conversion)
+
+        Raises:
+            KeyError: if the field does not exist
         """
         # TODO: raise error if multiple values in the query_string exist
         return streamlit.experimental_get_query_params()[key][0]  # always a list, get the first

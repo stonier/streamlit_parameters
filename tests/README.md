@@ -17,6 +17,11 @@ $ pytest -s test_hello.py
 # run a single test
 $ pytest -s test_hello.py::test_gday
 ```
+# Linters Only
+
+```
+$ tox -e flake8
+```
 
 # All Tests & Linters
 

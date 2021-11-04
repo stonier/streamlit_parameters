@@ -23,7 +23,7 @@ setup(
     url='http://github.com/stonier/streamlit_parameters',
     zip_safe=True,
     description="Streamlit parameter management for page configuration",
-    long_description="Streamlit parameter management for page configuration across defaults, session state and the url query string.",
+    long_description="Streamlit parameter management across widgets, session state & the url query string.",
     license='TMC',
     test_suite='tests',
     tests_require=['pytest'],
