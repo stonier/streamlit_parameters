@@ -222,7 +222,7 @@ class Parameters(object):
         return streamlit.sidebar.checkbox(
             label="Set All Params in URL Query",
             value=False,
-            key="parameters_set_all",
+            key="_parameters_set_all",
         )
 
     @staticmethod
