@@ -77,27 +77,16 @@ class AttrDict(dict):
 
 
 class Parameters(object):
-    """
-    What's in a URL? For a streamlit dashboard, not much.
+    """Machinery for the parameters that define the viewing state of your app.
 
-    Once you've interacted
-    with a dashboard in a myriad of way, sending someone the url for your
-    dashboard doesn't help them very much - they won't see what you are seeing.
+    This class connects the configuration
+    of input widgets to the URL query string so that it
+    can be copy/pasted and reproduced elsehwere without having to click through
+    a sequence of steps that put the user into that state.
 
-    Streamlit uses the URL query string to embed arguments into a URL so that you
-    *can* send someone the URL and load widgets into the right configuration so
-    they can exactly see what you were seeing. However, doing so is non-trivial.
-    It requires non-trivial management and manipulation of streamlit widgets,
-    streamlit's session state and the URL query string.
-
-    This class hides the session state machinery and url query string
-    manipulation from the user and automatically dictates the priority ordering
-    of configuration (url query string > defaults) for parameters used in your
-    application. It also provides convenient accessors to those parameters. End
-    result, something quite pythonic that avoids the learning curve for
-    session state handling in streamlit or url query string manipulation and
-    redundant copy/pasta that otherwise results without centralising this machinery
-    (e.g. datetime string conversions to and from the url query string).
+    Technically, this class hides the interactions with the session state
+    and retrieval/insertion into the URL query string. All a user needs
+    to interact with are the methods and attributes of this class.
 
     **Usage**
 
@@ -106,7 +95,7 @@ class Parameters(object):
      * add a matching key to a widget
      * add an on_change hook to the widget.
      * set url fields
-     * use and be froody!
+     * put on your peril-sensitive sunglasses and be froody!
 
     .. code-block::
 
@@ -125,33 +114,10 @@ class Parameters(object):
 
         streamlit.write("**Start Date**: {parameters.start_date.value}")  # <-- 6
 
-    **Two Modes**
+    **Modes**
 
-    In general, there are two modes to support - partial or full embedding of parameters
-    in the URL query string.
-
-    * partial - only set url query string fields if the parameter has been modified
-    * full - set url query string fields for all parameters
-
-    Suppose you have an application with an *end_date* parameter which has a default that
-    is programmatically determined on the first time the app is loaded (e.g. datetime.date.today()).
-    Today that might return 11-02-2021, tomorrow 11-03-2021.
-
-    Now suppose you want to copy the url for someone today (11-02-2021) and they will receive
-    the email in the morning tomorrow. A question arises:
-
-    * Do you want them to **experience** exactly what you experienced? In this case, you
-    never overrode that variable and you wish them to have that same experience, i.e. you want
-    them to see the latest view of that dashboard too -> you don't want to have the *end_date*
-    in the URL string.
-
-    * Do you want them to **see** exactly what you saw? In this case, you need to capture
-    a snapshot of every single parameter -> all parameters must go to the URL string.
-
-    This class provides a toggle for the user to choose their mode of operation. It can
-    either be accessed directly via the streamlit session state (session_state._parameters_set_all)
-    or toggleable via a checkbox, e.g.:
-
+    To enable a user to toggle between partial (overridden parameters only) or
+    full (all parameters) embedding of parameters in the URL query string:
     .. code-block:: python
 
         parameters = streamlit_parameters.parameters.Parameters()
@@ -167,7 +133,7 @@ class Parameters(object):
     * int
     * str
 
-    This class handles the problem described in
+    This class also handles the problem described in
     https://github.com/streamlit/streamlit/issues/1532 by saving and reusing the
     initial default for a parameter on the session state.
     """
