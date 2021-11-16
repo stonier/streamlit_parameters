@@ -122,6 +122,33 @@ pip3 install -e .[test]
 # Get package dependencies (fetches those listed in install_requires)
 python3 setup.py develop
 
+#############################
+# Aliases
+#############################
+
+alias create-pypi-package="rm -rf build dist && python3 setup.py sdist bdist_wheel && twine upload dist/*"
+alias create-pypi-package-test="rm -rf build dist && python3 setup.py sdist bdist_wheel && twine upload --repository-url https://test.pypi.org/legacy/ dist/*"
+alias create-deb="rm -rf dist deb_dist && python setup.py --command-packages=stdeb.command bdist_deb"
+alias create-source-deb="rm -rf dist deb_dist && python setup.py --command-packages=stdeb.command sdist_deb"
+alias tox-all="tox -e py38"
+alias tox-flake8="tox -e flake8"
+
+#############################
+# Summary
+#############################
+
+echo -e ""
+echo -e "${BOLD}---------------------------------------${RESET}"
+echo -e "${BOLD}        Streamlit Parameters${RESET}"
+echo -e "${BOLD}---------------------------------------${RESET}"
+echo -e ""
+echo -e "${GREEN}Aliases${RESET}"
+echo -e "${CYAN} - ${YELLOW}create-pypi-package${RESET}"
+echo -e "${CYAN} - ${YELLOW}create-pypi-package-test${RESET}"
+echo -e "${CYAN} - ${YELLOW}create-deb${RESET}"
+echo -e "${CYAN} - ${YELLOW}create-source-deb${RESET}"
+echo -e "${CYAN} - ${YELLOW}tox-all${RESET}"
+echo -e "${CYAN} - ${YELLOW}tox-flake8${RESET}"
 echo ""
 echo "Leave the virtual environment with 'deactivate'"
 echo ""
