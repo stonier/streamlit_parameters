@@ -44,6 +44,8 @@ def main():
     ####################
     today = datetime.date.today()
     seven_days_ago = today - datetime.timedelta(days=7)
+    string_list_params = ["flying", "spaghetti", "monster"]
+    bool_options = [True, False]
 
     parameters = streamlit_parameters.parameters.Parameters()
     parameters.register_bool_parameter(key="foo", default_value=False)
@@ -51,6 +53,13 @@ def main():
     parameters.register_date_parameter(key="start_date", default_value=seven_days_ago)
     parameters.register_date_parameter(key="end_date", default_value=today)
     parameters.register_string_parameter(key="category", default_value="carbonara")
+    parameters.register_float_parameter(key="floating", default_value=5.0)
+    parameters.register_int_range_parameter(key="int_range", default_value=[10, 20])
+    parameters.register_float_range_parameter(key="float_range", default_value=[0.1, 10.0])
+    parameters.register_string_list_parameter(key="string_list", default_value=string_list_params)
+    parameters.register_boolean_list_parameter(key="bool_list", default_value=[True, False])
+    parameters.register_date_range_parameter(key="date_range", default_value=[seven_days_ago, today])
+
 
     ####################
     # Widgets
@@ -106,6 +115,78 @@ def main():
         on_change=functools.partial(
             parameters.update_parameter_from_session_state,
             key=parameters.category.key
+        )
+    )
+
+    streamlit.sidebar.slider(
+        label="Choose a float value",
+        min_value=0.,
+        max_value=5.2,
+        step=0.1,
+        value=parameters.floating.default,
+        key=parameters.floating.key,
+        on_change=functools.partial(
+            parameters.update_parameter_from_session_state,
+            key=parameters.floating.key
+        )
+    )
+
+    streamlit.sidebar.slider(
+        label="Choose an integer range",
+        min_value=0,
+        max_value=100,
+        value=parameters.int_range.default,
+        key=parameters.int_range.key,
+        on_change=functools.partial(
+            parameters.update_parameter_from_session_state,
+            key=parameters.int_range.key
+        )
+    )
+
+    streamlit.sidebar.slider(
+        label="Choose a float range",
+        min_value=0.1,
+        max_value=10.3,
+        step=0.1,
+        value=parameters.float_range.default,
+        key=parameters.float_range.key,
+        on_change=functools.partial(
+            parameters.update_parameter_from_session_state,
+            key=parameters.float_range.key
+        )
+    )
+
+    streamlit.sidebar.multiselect(
+        label="Choose a string list",
+        options=string_list_params,
+        default=parameters.string_list.default,
+        key=parameters.string_list.key,
+        on_change=functools.partial(
+            parameters.update_parameter_from_session_state,
+            key=parameters.string_list.key
+        )
+    )
+
+    streamlit.sidebar.multiselect(
+        label="Choose boolean list",
+        options=bool_options,
+        default=parameters.bool_list.default,
+        key=parameters.bool_list.key,
+        on_change=functools.partial(
+            parameters.update_parameter_from_session_state,
+            key=parameters.bool_list.key
+        )
+    )
+
+    streamlit.sidebar.date_input(
+        label="Choose date range",
+        min_value=seven_days_ago,
+        max_value=today,
+        value=parameters.date_range.default,
+        key=parameters.date_range.key,
+        on_change=functools.partial(
+            parameters.update_parameter_from_session_state,
+            key=parameters.date_range.key
         )
     )
 

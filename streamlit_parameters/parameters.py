@@ -14,7 +14,8 @@
 
 import datetime
 import dateutil.parser
-import typing
+from distutils import util
+from typing import Callable, Any, List, Tuple
 
 import streamlit
 
@@ -22,11 +23,18 @@ import streamlit
 # Support
 ##############################################################################
 
+def _convert_list_or_tuple(values, to_str=str):
+    return "(" + ",".join(to_str(value) for value in values) + ")"
 
 class Parameter(object):
     """Stores default, current and metadata about a parameter."""
 
-    def __init__(self, key: str, default: typing.Any, touched: bool = False):
+    def __init__(
+        self, 
+        key: str, 
+        default: Any, 
+        touched: bool = False, 
+        to_str: Callable[[Any], str]=str):
         """
         Initialise the parameter with defaults, state and metadata.
 
@@ -34,14 +42,15 @@ class Parameter(object):
             key: name of this parameter
             default: initial value
             touched: flagged for export or otherwise
+            to_str: Custom string conversion function. Defaults to str()
         """
         self.key = key
-        self.default: typing.Any = default
-        self.value: typing.Any = default
+        self.default: Any = default
+        self.value: Any = default
         self.touched: bool = touched
-        self.to_str = str
+        self.to_str = to_str
 
-    def update(self, new_value: typing.Any):
+    def update(self, new_value: Any):
         """Override the current value.
 
         Since it's no longer the default, flag it
@@ -120,7 +129,7 @@ class Parameters(object):
     full (all parameters) embedding of parameters in the URL query string:
     .. code-block:: python
 
-        parameters = streamlit_parameters.parameters.Parameters()
+        parameters = streamlit_mercury_utilities.parameters.Parameters()
         with streamlit.sidebar:
             parameters.create_set_all_checkbox()
 
@@ -203,8 +212,7 @@ class Parameters(object):
 
     @staticmethod
     def register_int_parameter(key: str, default_value: int):
-        """Register an int parameter.
-
+        """
         Register an int type parameter and initialise it from the url query
         string, or as a fallback, with the provided default value if the key is
         not present in the url query string.
@@ -216,19 +224,96 @@ class Parameters(object):
             return
         try:
             parameter = Parameter(
-                key=key,
-                default=int(Parameters._fetch_url_field(key)),
-                touched=True
+                key=key, default=int(Parameters._fetch_url_field(key)), touched=True
+            )
+        except KeyError:
+            parameter = Parameter(key=key, default=default_value)
+        streamlit.session_state._parameters[key] = parameter
+    
+    @staticmethod
+    def _read_list_or_tuple(key, split_sequence=","):
+        raw_str = Parameters._fetch_url_field(key)
+        if raw_str[0] in ("(", "["):
+            raw_str = raw_str[1:]
+        if raw_str[-1] in (")", "]"):
+            raw_str = raw_str[:-1]
+        values = raw_str.split(split_sequence)
+        # Remove any quotes that may be added to the string.
+        new_values = []
+        for value in values:
+            new_value = value.strip()
+            if new_value[0] == "'":
+                new_value = new_value[1:]
+            if new_value[-1] == "'":
+                new_value = new_value[:-1]
+            new_values.append(new_value)
+        return new_values
+
+    @staticmethod
+    def _register_range_parameter(
+        key: str, default_value: Tuple[Any, Any], convert_callable
+    ):
+        if Parameters._already_registered(key):
+            return
+        try:
+            parts = [convert_callable(i) for i in Parameters._read_list_or_tuple(key)]
+            assert len(parts) == 2, "Should have 2 parts for a range"
+            parameter = Parameter(
+                key=key, 
+                default=(parts[0], parts[1]), 
+                touched=True, 
+                to_str=_convert_list_or_tuple)
+        except KeyError:
+            parameter = Parameter(key=key, default=default_value, to_str=_convert_list_or_tuple)
+        streamlit.session_state._parameters[key] = parameter
+
+    @staticmethod
+    def register_int_range_parameter(key: str, default_value: Tuple[int, int]):
+        """
+        Register an int range type parameter and initialise it from the url query
+        string, or as a fallback, with the provided default value if the key is
+        not present in the url query string.
+
+        @raises:
+            ValueError if conversion from a provided str value in the url field fails
+        """
+        Parameters._register_range_parameter(key, default_value, int)
+
+    @staticmethod
+    def register_float_parameter(key: str, default_value: float):
+        """
+        Register a float type parameter and initialise it from the url query
+        string, or as a fallback, with the provided default value if the key is
+        not present in the url query string.
+
+        @raises:
+            ValueError if conversion from a provided str value in the url field fails
+        """
+        if Parameters._already_registered(key):
+            return
+        try:
+            parameter = Parameter(
+                key=key, default=float(Parameters._fetch_url_field(key)), touched=True
             )
         except KeyError:
             parameter = Parameter(key=key, default=default_value)
         streamlit.session_state._parameters[key] = parameter
 
     @staticmethod
+    def register_float_range_parameter(key: str, default_value: Tuple[int, int]):
+        """
+        Register a float range type parameter and initialise it from the url query
+        string, or as a fallback, with the provided default value if the key is
+        not present in the url query string.
+
+        @raises:
+            ValueError if conversion from a provided str value in the url field fails
+        """
+        Parameters._register_range_parameter(key, default_value, float)
+
+    @staticmethod
     def register_string_parameter(key: str, default_value: str):
         """
-        Register a string parameter.
-
         Register a string parameter and initialise it from the url query
         string, or as a fallback, with the provided default value if the key is
         not present in the url query string.
@@ -241,6 +326,41 @@ class Parameters(object):
                 default=Parameters._fetch_url_field(key),
                 touched=True
             )
+        except KeyError:
+            parameter = Parameter(key=key, default=default_value)
+        streamlit.session_state._parameters[key] = parameter
+
+    @staticmethod
+    def register_string_list_parameter(key: str, default_value: List[str]):
+        """
+        Register a string list parameter and initialise it from the url query
+        string, or as a fallback, with the provided default value if the key is
+        not present in the url query string.
+        """
+        if Parameters._already_registered(key):
+            return
+        try:
+            # Remove the initial and trailing brackets and split it.
+            values = Parameters._read_list_or_tuple(key)
+            parameter = Parameter(key=key, default=values, touched=True)
+        except KeyError:
+            parameter = Parameter(key=key, default=default_value)
+        streamlit.session_state._parameters[key] = parameter
+    
+    @staticmethod
+    def register_boolean_list_parameter(key: str, default_value: List[bool]):
+        """
+        Register a boolean list parameter and initialise it from the url query
+        string, or as a fallback, with the provided default value if the key is
+        not present in the url query string.
+        """
+        if Parameters._already_registered(key):
+            return
+        try:
+            # Remove the initial and trailing brackets and split it.
+            values = Parameters._read_list_or_tuple(key)
+            new_values = [util.strtobool(value) for value in values]
+            parameter = Parameter(key=key, default=new_values, touched=True)
         except KeyError:
             parameter = Parameter(key=key, default=default_value)
         streamlit.session_state._parameters[key] = parameter
@@ -268,6 +388,20 @@ class Parameters(object):
         except KeyError:
             parameter = Parameter(key=key, default=default_value)
         streamlit.session_state._parameters[key] = parameter
+
+    @staticmethod
+    def register_date_range_parameter(key: str, default_value: Tuple[datetime.date, datetime.date]):
+        """
+        Register a date range type parameter and initialise it from the url query
+        string, or as a fallback, with the provided default value if the key is
+        not present in the url query string.
+
+        @raises:
+            ValueError if conversion from a provided str value in the url field fails
+        """
+        Parameters._register_range_parameter(
+            key, default_value, lambda x: dateutil.parser.parse(x).date()
+        )
 
     @staticmethod
     def register_bool_parameter(key: str, default_value: bool):
@@ -309,7 +443,7 @@ class Parameters(object):
         Parameters.update_parameter(key, value)
 
     @staticmethod
-    def update_parameter(key: str, value: typing.Any):
+    def update_parameter(key: str, value: Any):
         """Update a single parameter.
 
         Args:
