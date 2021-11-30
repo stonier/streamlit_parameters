@@ -60,6 +60,24 @@ parameters.set_url_fields()  # <-- 5 (sets all fields in one batch call)
 streamlit.write("**Start Date**: {parameters.start_date.value}")  # <-- 6
 ```
 
+## Types
+
+Supported parameter types include:
+
+* `bool`
+* `int`
+* `float`
+* `date`
+* `string`
+* `pair[int]`
+* `pair[float]`
+* `pair[date]`
+* `list[string]`
+* `list[bool]`
+
+Pairs work well with slider widgets that specify ranges of values. Lists with, e.g. multiselects. See the demo
+for a reference example.
+
 ## Modes
 
 In general, there are two modes to support - partial or full embedding of parameters
