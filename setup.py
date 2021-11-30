@@ -14,7 +14,7 @@ extras_require = {
 
 setup(
     name='streamlit_parameters',
-    version='0.1.1',
+    version='0.1.2',
     packages=find_packages(exclude=['tests*', 'docs*']),
     install_requires=install_requires,
     extras_require=extras_require,
