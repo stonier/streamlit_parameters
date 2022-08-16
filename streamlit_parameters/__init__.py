@@ -21,7 +21,7 @@ from . import parameters  # noqa
 ##############################################################################
 
 # Update in setup.py as well
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 # import pkg_resources
 
