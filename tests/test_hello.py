@@ -17,4 +17,4 @@ import streamlit_parameters
 
 def test_gday():
     print("Test - Gday")
-    assert("G'day!" == streamlit_parameters.hello.gday())
+    assert "G'day!" == streamlit_parameters.hello.gday()
