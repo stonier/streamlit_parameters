@@ -18,7 +18,7 @@ import sys
 import typing
 
 import streamlit
-import streamlit.cli
+import streamlit.web.cli
 
 import streamlit_parameters
 
@@ -240,4 +240,4 @@ if __name__ == "__main__":
 def console_main():
     filename = __file__
     sys.argv = ["streamlit", "run", filename]
-    streamlit.cli.main()
+    streamlit.web.cli.main()
