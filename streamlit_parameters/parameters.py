@@ -246,16 +246,17 @@ class Parameters(object):
             raw_str = raw_str[1:]
         if raw_str[-1] in (")", "]"):
             raw_str = raw_str[:-1]
-        values = raw_str.split(split_sequence)
-        # Remove any quotes that may be added to the string.
         new_values = []
-        for value in values:
-            new_value = value.strip()
-            if new_value[0] == "'":
-                new_value = new_value[1:]
-            if new_value[-1] == "'":
-                new_value = new_value[:-1]
-            new_values.append(new_value)
+        if raw_str:
+            values = raw_str.split(split_sequence)
+            # Remove any quotes that may be added to the string.
+            for value in values:
+                new_value = value.strip()
+                if new_value[0] == "'":
+                    new_value = new_value[1:]
+                if new_value[-1] == "'":
+                    new_value = new_value[:-1]
+                new_values.append(new_value)
         return new_values
 
     @staticmethod
