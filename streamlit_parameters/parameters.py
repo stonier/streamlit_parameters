@@ -436,7 +436,7 @@ class Parameters(object):
             s = Parameters._fetch_url_field(key)
             parameter = Parameter(
                 key=key,
-                default=s.lower() in ["true", "false", "yes", "no"],
+                default=s.lower() in ["true", "yes"],
                 touched=True
             )
         except KeyError:
