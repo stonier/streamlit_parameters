@@ -7,7 +7,7 @@ install_requires = [
     'streamlit>=1.12,<2'
 ]
 
-tests_require = ['pytest', 'tox']
+tests_require = ['pytest', 'pytest-mock', 'tox']
 extras_require = {
     'test': tests_require,
 }
