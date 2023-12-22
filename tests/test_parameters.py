@@ -9,8 +9,7 @@ sut = "streamlit_parameters.parameters"
 
 @pytest.fixture
 def mock_session_state(mocker):
-    """pytest fixture that mocks streamlit.session_state"""
-
+    """Add a pytest fixture that mocks streamlit.session_state."""
     session_state = mocker.patch(sut + ".streamlit.session_state")
     session_state._parameters = {}
     session_state._parameters_set_all = False
@@ -18,8 +17,7 @@ def mock_session_state(mocker):
 
 @pytest.fixture
 def mock_query_params(mocker):
-    """pytest fixture that returns a function that mocks query params"""
-
+    """Add a pytest fixture that returns a function that mocks query params."""
     def func(key: str, value: str):
         get_query_params = mocker.patch(
             sut + ".streamlit.experimental_get_query_params"
@@ -34,7 +32,7 @@ def parameters():
     return Parameters()
 
 
-def test_register_bool_parameter_True_in_url(
+def test_register_bool_parameter_true_in_url(
     mock_query_params,
     mock_session_state,
     parameters,
@@ -48,7 +46,7 @@ def test_register_bool_parameter_True_in_url(
     assert repr(parameter) == "Parameter(default=True,value=True,touched=True)"
 
 
-def test_register_bool_parameter_False_in_url(
+def test_register_bool_parameter_false_in_url(
     mock_query_params,
     mock_session_state,
     parameters,
