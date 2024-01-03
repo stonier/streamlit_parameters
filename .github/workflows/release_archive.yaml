@@ -1,0 +1,20 @@
+name: Release Archive
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  # Attach tarballs to releases with stable release url's
+  #   NB: tag url's aren't guaranteed to be persistent
+  #   See: https://blog.bazel.build/2023/02/15/github-archive-checksum.html
+  release-archive:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - run: git archive $GITHUB_REF -o "streamlit-parameters-${GITHUB_REF:10}.tar.gz"
+      - run: gh release upload ${GITHUB_REF:10} "streamlit-parameters-${GITHUB_REF:10}.tar.gz"
+        env:
+          GH_TOKEN: ${{ github.token }}
