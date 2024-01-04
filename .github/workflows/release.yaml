@@ -19,11 +19,18 @@ jobs:
       - name: Variables
         run: |
           echo "Repository Name: ${{ github.event.repository.name }}"
-          echo "Tag: $TAG"
           echo "GITHUB_REF: ${GITHUB_REF}"
           echo "GITUB_REF_NAME: ${GITHUB_REF_NAME}"
-      # - name: Cut a Release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     prerelease: false
-      #     files: streamlit_parameters-*.tar.gz
+      - name: Env Variables
+        shell: bash
+        run: |
+          echo "TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
+          echo "TARBALL_NAME=${{ env.REPO_NAME }}-${{ env.TAG }}.tar.gz"
+      - name: Create Release Asset
+        run: git archive $GITHUB_REF -o "${{ env.TARBALL_NAME }}"
+      - name: Cut a Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: false
+          files: ${{ env.TARBALL_NAME }}
