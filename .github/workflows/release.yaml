@@ -1,0 +1,23 @@
+# Cut a release whenever a new tag is pushed to the repo.
+# You should use an annotated tag, like `git tag -a v1.2.3`
+# and put the release notes into the commit message for the tag.
+name: Release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  # Attach tarballs to releases with stable release url's
+  #   NB: tag url's aren't guaranteed to be persistent
+  #   See: https://blog.bazel.build/2023/02/15/github-archive-checksum.html
+  release-archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cut a Release
+        uses: softprops/action-gh-release@v1
+        with:
+          prerelease: false
+          files: streamlit_parameters-*.tar.gz

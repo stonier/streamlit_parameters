@@ -15,6 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: git archive $GITHUB_REF -o "streamlit-parameters-${GITHUB_REF:10}.tar.gz"
-      - run: gh release upload ${GITHUB_REF:10} "streamlit-parameters-${GITHUB_REF:10}.tar.gz"
-        env:
-          GH_TOKEN: ${{ github.token }}
+      # - run: gh release upload ${GITHUB_REF:10} "streamlit-parameters-${GITHUB_REF:10}.tar.gz"
+      #   env:
+      #     GH_TOKEN: ${{ github.token }}
