@@ -16,8 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Cut a Release
-        uses: softprops/action-gh-release@v1
-        with:
-          prerelease: false
-          files: streamlit_parameters-*.tar.gz
+      - name: Variables
+        run: |
+          echo "Repository Name: ${{ github.event.repository.name }}"
+          echo "Tag: $TAG"
+          echo "GITHUB_REF: ${GITHUB_REF}"
+          echo "GITUB_REF_NAME: ${GITHUB_REF_NAME}"
+      # - name: Cut a Release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     prerelease: false
+      #     files: streamlit_parameters-*.tar.gz
