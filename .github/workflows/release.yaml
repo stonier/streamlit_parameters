@@ -16,21 +16,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Variables
-        run: |
-          echo "Repository Name: ${{ github.event.repository.name }}"
-          echo "GITHUB_REF: ${GITHUB_REF}"
-          echo "GITUB_REF_NAME: ${GITHUB_REF_NAME}"
       - name: Env Variables
         shell: bash
         run: |
           echo "TAG=${GITHUB_REF_NAME}" >> $GITHUB_ENV
           echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
-          echo "TARBALL_NAME=${{ env.REPO_NAME }}-${{ env.TAG }}.tar.gz" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=${{ github.event.repository.name }}-${GITHUB_REF_NAME}" >> $GITHUB_ENV
+      - name: Variables
+        run: |
+          echo "Repository Name: ${{ github.event.repository.name }}"
+          echo "GITHUB_REF: ${GITHUB_REF}"
+          echo "GITUB_REF_NAME: ${GITHUB_REF_NAME}"
+          echo "ARCHIVE_NAME: ${{ env.ARCHIVE_NAME }}"
       - name: Create Release Asset
-        run: git archive $GITHUB_REF -o "${{ env.TARBALL_NAME }}"
+        run: git archive $GITHUB_REF --prefix=${{ env.ARCHIVE_NAME }} -o "${{ env.ARCHIVE_NAME }}.tar.gz"
       - name: Cut a Release
         uses: softprops/action-gh-release@v1
         with:
           prerelease: false
-          files: ${{ env.TARBALL_NAME }}
+          files: ${{ env.ARCHIVE_NAME }}.tar.gz
