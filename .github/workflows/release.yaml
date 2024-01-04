@@ -29,7 +29,7 @@ jobs:
           echo "GITUB_REF_NAME: ${GITHUB_REF_NAME}"
           echo "ARCHIVE_NAME: ${{ env.ARCHIVE_NAME }}"
       - name: Create Release Asset
-        run: git archive $GITHUB_REF --prefix=${{ env.ARCHIVE_NAME }} -o "${{ env.ARCHIVE_NAME }}.tar.gz"
+        run: git archive $GITHUB_REF --prefix=${{ env.ARCHIVE_NAME }}/ -o "${{ env.ARCHIVE_NAME }}.tar.gz"
       - name: Cut a Release
         uses: softprops/action-gh-release@v1
         with:
