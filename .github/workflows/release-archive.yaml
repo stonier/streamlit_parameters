@@ -1,4 +1,4 @@
-name: Release Archive
+name: release-archive
 
 on:
   release:

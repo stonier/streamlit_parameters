@@ -33,9 +33,7 @@ def main():
     ####################
     title = "Parameter Reflection"
     streamlit.set_page_config(
-        page_title=title,
-        layout="wide",
-        initial_sidebar_state="expanded"
+        page_title=title, layout="wide", initial_sidebar_state="expanded"
     )
     streamlit.write(f"# {title}")
 
@@ -55,10 +53,18 @@ def main():
     parameters.register_string_parameter(key="category", default_value="carbonara")
     parameters.register_float_parameter(key="floating", default_value=5.0)
     parameters.register_int_range_parameter(key="int_range", default_value=[10, 20])
-    parameters.register_float_range_parameter(key="float_range", default_value=[0.1, 10.0])
-    parameters.register_string_list_parameter(key="string_list", default_value=string_list_params)
-    parameters.register_boolean_list_parameter(key="bool_list", default_value=[True, False])
-    parameters.register_date_range_parameter(key="date_range", default_value=[seven_days_ago, today])
+    parameters.register_float_range_parameter(
+        key="float_range", default_value=[0.1, 10.0]
+    )
+    parameters.register_string_list_parameter(
+        key="string_list", default_value=string_list_params
+    )
+    parameters.register_boolean_list_parameter(
+        key="bool_list", default_value=[True, False]
+    )
+    parameters.register_date_range_parameter(
+        key="date_range", default_value=[seven_days_ago, today]
+    )
 
     ####################
     # Widgets
@@ -68,9 +74,8 @@ def main():
         value=parameters.foo.value,
         key=parameters.foo.key,
         on_change=functools.partial(
-            parameters.update_parameter_from_session_state,
-            key=parameters.foo.key
-        )
+            parameters.update_parameter_from_session_state, key=parameters.foo.key
+        ),
     )
     streamlit.sidebar.number_input(
         label="Bar",
@@ -80,9 +85,8 @@ def main():
         step=1,
         key=parameters.bar.key,
         on_change=functools.partial(
-            parameters.update_parameter_from_session_state,
-            key=parameters.bar.key
-        )
+            parameters.update_parameter_from_session_state, key=parameters.bar.key
+        ),
     )
     streamlit.sidebar.date_input(
         label="Start Date",
@@ -92,7 +96,8 @@ def main():
         key=parameters.start_date.key,
         on_change=functools.partial(
             parameters.update_parameter_from_session_state,
-            key=parameters.start_date.key)
+            key=parameters.start_date.key,
+        ),
     )
     streamlit.sidebar.date_input(
         label="End Date",
@@ -101,9 +106,8 @@ def main():
         max_value=today,
         key=parameters.end_date.key,
         on_change=functools.partial(
-            parameters.update_parameter_from_session_state,
-            key=parameters.end_date.key
-        )
+            parameters.update_parameter_from_session_state, key=parameters.end_date.key
+        ),
     )
     category_indices = {"lasagne": 0, "carbonara": 1, "macaroni": 2}
     streamlit.sidebar.selectbox(
@@ -112,22 +116,20 @@ def main():
         options=["lasagne", "carbonara", "macaroni"],
         key=parameters.category.key,
         on_change=functools.partial(
-            parameters.update_parameter_from_session_state,
-            key=parameters.category.key
-        )
+            parameters.update_parameter_from_session_state, key=parameters.category.key
+        ),
     )
 
     streamlit.sidebar.slider(
         label="Choose a float value",
-        min_value=0.,
+        min_value=0.0,
         max_value=5.2,
         step=0.1,
         value=parameters.floating.default,
         key=parameters.floating.key,
         on_change=functools.partial(
-            parameters.update_parameter_from_session_state,
-            key=parameters.floating.key
-        )
+            parameters.update_parameter_from_session_state, key=parameters.floating.key
+        ),
     )
 
     streamlit.sidebar.slider(
@@ -137,9 +139,8 @@ def main():
         value=parameters.int_range.default,
         key=parameters.int_range.key,
         on_change=functools.partial(
-            parameters.update_parameter_from_session_state,
-            key=parameters.int_range.key
-        )
+            parameters.update_parameter_from_session_state, key=parameters.int_range.key
+        ),
     )
 
     streamlit.sidebar.slider(
@@ -151,8 +152,8 @@ def main():
         key=parameters.float_range.key,
         on_change=functools.partial(
             parameters.update_parameter_from_session_state,
-            key=parameters.float_range.key
-        )
+            key=parameters.float_range.key,
+        ),
     )
 
     streamlit.sidebar.multiselect(
@@ -162,8 +163,8 @@ def main():
         key=parameters.string_list.key,
         on_change=functools.partial(
             parameters.update_parameter_from_session_state,
-            key=parameters.string_list.key
-        )
+            key=parameters.string_list.key,
+        ),
     )
 
     streamlit.sidebar.multiselect(
@@ -172,9 +173,8 @@ def main():
         default=parameters.bool_list.default,
         key=parameters.bool_list.key,
         on_change=functools.partial(
-            parameters.update_parameter_from_session_state,
-            key=parameters.bool_list.key
-        )
+            parameters.update_parameter_from_session_state, key=parameters.bool_list.key
+        ),
     )
 
     streamlit.sidebar.date_input(
@@ -185,8 +185,8 @@ def main():
         key=parameters.date_range.key,
         on_change=functools.partial(
             parameters.update_parameter_from_session_state,
-            key=parameters.date_range.key
-        )
+            key=parameters.date_range.key,
+        ),
     )
 
     with streamlit.sidebar:
@@ -222,6 +222,7 @@ def main():
 
     streamlit.write("#### Session State")
     streamlit.write(streamlit.session_state)
+
 
 ##############################################################################
 # Entry Points
