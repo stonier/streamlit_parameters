@@ -507,7 +507,4 @@ class Parameters(object):
         Raises:
             KeyError: if the field does not exist
         """
-        # TODO: raise error if multiple values in the query_string exist
         return streamlit.query_params[key]
-            0
-        ]  # always a list, get the first

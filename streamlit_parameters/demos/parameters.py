@@ -214,7 +214,7 @@ def main():
     streamlit.write("## Debugging")
 
     streamlit.write("#### Query String")
-    query_string: typing.Dict[str, str] = streamlit.query_params.get_all()
+    query_string: typing.Dict[str, str] = streamlit.query_params
     streamlit.write(query_string)
 
     streamlit.write("#### Parameters")
