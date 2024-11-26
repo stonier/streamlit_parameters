@@ -19,7 +19,7 @@ from . import demos, hello, parameters  # noqa  # noqa  # noqa
 ##############################################################################
 
 # Update in setup.py as well
-__version__ = "0.1.5"
+__version__ = "0.2.0"
 
 # import pkg_resources
 
