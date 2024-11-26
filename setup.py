@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 
 install_requires = [
-    'streamlit>=1.12,<2'
+    'streamlit>=1.30,<2'
 ]
 
 tests_require = ['pytest', 'pytest-mock', 'tox']

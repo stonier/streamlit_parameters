@@ -486,7 +486,7 @@ class Parameters(object):
         for key, parameter in streamlit.session_state._parameters.items():
             if Parameters.is_set_all() or parameter.touched:
                 values[key] = parameter.to_str(parameter.value)
-        streamlit.experimental_set_query_params(**values)
+        streamlit.query_params.from_dict(values)
 
     @staticmethod
     def _already_registered(key: str) -> bool:
@@ -507,7 +507,4 @@ class Parameters(object):
         Raises:
             KeyError: if the field does not exist
         """
-        # TODO: raise error if multiple values in the query_string exist
-        return streamlit.experimental_get_query_params()[key][
-            0
-        ]  # always a list, get the first
+        return streamlit.query_params[key]

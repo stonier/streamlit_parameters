@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "streamlit_parameters"
-version = "0.2.0"
+version = "0.1.5"
 description = "Streamlit parameter management for page configuration"
 authors = ["Daniel Stonier"]
 maintainers = ["Daniel Stonier <d.stonier@gmail.com>"]

@@ -19,10 +19,10 @@ def mock_session_state(mocker):
 def mock_query_params(mocker):
     """Add a pytest fixture that returns a function that mocks query params."""
     def func(key: str, value: str):
-        get_query_params = mocker.patch(
-            sut + ".streamlit.experimental_get_query_params"
+        mocker.patch.dict(
+            sut + ".streamlit.query_params",
+            {key: value}
         )
-        get_query_params.return_value = {key: [value]}
 
     return func
 
@@ -176,9 +176,9 @@ def test_register_string_parameter(
     assert parameter.default == "G'day!"
     assert parameter.value == "Hello"
     assert repr(parameter) == "Parameter(default=G'day!,value=Hello,touched=True)"
-    set_query_params = mocker.patch(sut + ".streamlit.experimental_set_query_params")
+    set_query_params = mocker.patch(sut + ".streamlit.runtime.state.query_params_proxy.QueryParamsProxy.from_dict")
     Parameters.set_url_fields()
-    set_query_params.assert_called_with(foo="Hello")
+    set_query_params.assert_called_with({"foo": "Hello"})
 
 
 def test_register_string_parameter_not_in_url(
@@ -223,14 +223,14 @@ def test_register_string_list_parameter(
         repr(parameter)
         == "Parameter(default=['flying', 'spaghetti', 'monster'],value=['flying', 'spaghetti', 'monster'],touched=True)"
     )
-    set_query_params = mocker.patch(sut + ".streamlit.experimental_set_query_params")
+    set_query_params = mocker.patch(sut + ".streamlit.runtime.state.query_params_proxy.QueryParamsProxy.from_dict")
     Parameters.set_url_fields()
-    set_query_params.assert_called_with(foo="['flying', 'spaghetti', 'monster']")
+    set_query_params.assert_called_with({"foo": "['flying', 'spaghetti', 'monster']"})
 
     # Now update value and make sure new value properly serialized in query params
     parameters.foo.update(new_value=["Hello", "world"])
     Parameters.set_url_fields()
-    set_query_params.assert_called_with(foo="['Hello', 'world']")
+    set_query_params.assert_called_with({"foo": "['Hello', 'world']"})
 
 
 def test_register_string_list_parameter_not_in_url(
@@ -278,9 +278,9 @@ def test_register_date_parameter(
     parameter = st.session_state._parameters["foo"]
     assert parameter.default == datetime.date(2021, 11, 1)
     assert parameter.value == datetime.date(2021, 11, 1)
-    set_query_params = mocker.patch(sut + ".streamlit.experimental_set_query_params")
+    set_query_params = mocker.patch(sut + ".streamlit.runtime.state.query_params_proxy.QueryParamsProxy.from_dict")
     Parameters.set_url_fields()
-    set_query_params.assert_called_with(foo="2021-11-01")
+    set_query_params.assert_called_with({"foo": "2021-11-01"})
 
 
 def test_register_date_parameter_not_in_url(
@@ -307,10 +307,10 @@ def test_register_date_range_parameter(
     assert parameter.value == (datetime.date(2021, 11, 1), datetime.date(2021, 11, 3))
 
     # Now update value and make sure new value properly serialized in query params
-    set_query_params = mocker.patch(sut + ".streamlit.experimental_set_query_params")
+    set_query_params = mocker.patch(sut + ".streamlit.runtime.state.query_params_proxy.QueryParamsProxy.from_dict")
     parameters.foo.update(new_value=(datetime.date(2023, 11, 1), datetime.date(2023, 11, 3)))
     Parameters.set_url_fields()
-    set_query_params.assert_called_with(foo='(2023-11-01,2023-11-03)')
+    set_query_params.assert_called_with({"foo": '(2023-11-01,2023-11-03)'})
 
 
 def test_as_dict(

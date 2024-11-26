@@ -15,7 +15,6 @@
 import datetime
 import functools
 import sys
-import typing
 
 import streamlit
 import streamlit.web.cli
@@ -214,8 +213,7 @@ def main():
     streamlit.write("## Debugging")
 
     streamlit.write("#### Query String")
-    query_string: typing.Dict[str, str] = streamlit.experimental_get_query_params()
-    streamlit.write(query_string)
+    streamlit.write(streamlit.query_params)
 
     streamlit.write("#### Parameters")
     streamlit.write(parameters.as_dict())
