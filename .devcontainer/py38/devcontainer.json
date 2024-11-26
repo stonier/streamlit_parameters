@@ -1,16 +1,18 @@
 {
     "name": "headless-py38",
+    "image": "ghcr.io/stonier/streamlit_parameters:py38-poetry-bullseye",
 
-    "build": {
-        "dockerfile": "../Dockerfile",
-        "args": {
-            "NAME": "streamlit_parameters",
-            "POETRY_VERSION": "1.8.4",
-            "PYTHON_VERSION": "3.8.16",
-            "DEBIAN_VERSION": "bookworm"
-        },
-        "context": ".."
-    },
+    // "build": {
+    //     "dockerfile": "../Dockerfile",
+    //     "args": {
+    //         "NAME": "streamlit_parameters",
+    //         "POETRY_VERSION": "1.8.4",
+    //         "PYTHON_VERSION": "3.8.16",
+    //         "DEBIAN_VERSION": "bookworm"
+    //     },
+    //     "context": ".."
+    // },
+
     "containerEnv": {
         "POETRY_HTTP_BASIC_PYPI_USERNAME": "${localEnv:POETRY_HTTP_BASIC_PYPI_USERNAME}",
         "POETRY_HTTP_BASIC_PYPI_PASSWORD": "${localEnv:POETRY_HTTP_BASIC_PYPI_PASSWORD}"
@@ -31,8 +33,5 @@
             ]
         }
     },
-    "postCreateCommand": "poetry install",
-    // Breaks codespaces
-    // "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind",
-    // "workspaceFolder": "/workspaces"
+    "postCreateCommand": "poetry install"
  }
