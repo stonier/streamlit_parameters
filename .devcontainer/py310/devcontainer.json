@@ -1,15 +1,17 @@
 {
     "name": "headless-py310",
+    "image": "ghcr.io/stonier/streamlit_parameters:py310-poetry-bullseye",
 
-    "build": {
-        "dockerfile": "../Dockerfile",
-        "args": {
-            "NAME": "py_trees-310",
-            "POETRY_VERSION": "1.8.4",
-            "PYTHON_VERSION": "3.10.15",
-            "DEBIAN_VERSION": "bookworm"
-        }
-    },
+    // "build": {
+    //     "dockerfile": "../Dockerfile",
+    //     "args": {
+    //         "NAME": "py_trees-310",
+    //         "POETRY_VERSION": "1.8.4",
+    //         "PYTHON_VERSION": "3.10.15",
+    //         "DEBIAN_VERSION": "bookworm"
+    //     }
+    // },
+
     "containerEnv": {
         "POETRY_HTTP_BASIC_PYPI_USERNAME": "${localEnv:POETRY_HTTP_BASIC_PYPI_USERNAME}",
         "POETRY_HTTP_BASIC_PYPI_PASSWORD": "${localEnv:POETRY_HTTP_BASIC_PYPI_PASSWORD}"
@@ -27,7 +29,5 @@
             ]
         }
     },
-    "postCreateCommand": "poetry install",
-    // "workspaceMount": "source=${localWorkspaceFolder}/../..,target=/workspaces,type=bind",
-    // "workspaceFolder": "/workspaces"
+    "postCreateCommand": "poetry install"
 }
