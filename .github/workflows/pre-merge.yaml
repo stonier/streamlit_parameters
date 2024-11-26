@@ -49,11 +49,6 @@ jobs:
       # Project is installed separately to avoid always invalidating the cache
       - name: Poetry - Install Project
         run: poetry install --no-interaction
-      - name: Tox - Tests [py38]
-        # fast this time around since the last step did the installation, venv.bash will only check here
-        run: |
-          source ./venv.bash
-          tox -e py38
 
       - name: Tox - Tests
         run: poetry run tox --workdir ${{ env.VENV_DIR }} -e ${{ matrix.python-py-version }}
