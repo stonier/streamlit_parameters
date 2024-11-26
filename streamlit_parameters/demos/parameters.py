@@ -15,7 +15,6 @@
 import datetime
 import functools
 import sys
-import typing
 
 import streamlit
 import streamlit.web.cli
