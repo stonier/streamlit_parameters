@@ -2,7 +2,7 @@ name: push-poetry-image
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-ci
+  IMAGE_NAME: streamlit-parameters
   POETRY_VERSION: 1.8.4
   PYTHON_PRIMARY_VERSION: 3.10.15
   PYTHON_PRIMARY_TAG: py310
