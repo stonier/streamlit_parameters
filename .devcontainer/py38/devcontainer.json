@@ -1,0 +1,38 @@
+{
+    "name": "headless-py38",
+
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "args": {
+            "NAME": "streamlit_parameters",
+            "POETRY_VERSION": "1.8.4",
+            "PYTHON_VERSION": "3.8.16",
+            "DEBIAN_VERSION": "bookworm"
+        },
+        "context": ".."
+    },
+    "containerEnv": {
+        "POETRY_HTTP_BASIC_PYPI_USERNAME": "${localEnv:POETRY_HTTP_BASIC_PYPI_USERNAME}",
+        "POETRY_HTTP_BASIC_PYPI_PASSWORD": "${localEnv:POETRY_HTTP_BASIC_PYPI_PASSWORD}"
+    },
+    "remoteUser": "zen",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bierner.github-markdown-preview",
+                "bierner.markdown-preview-github-styles",
+                "bungcip.better-toml",
+                "eamodio.gitlens",
+                "ms-python.python",
+                "omnilib.ufmt",
+                "redhat.vscode-yaml",
+                "streetsidesoftware.code-spell-checker",
+                "tht13.rst-vscode"
+            ]
+        }
+    },
+    "postCreateCommand": "poetry install",
+    // Breaks codespaces
+    // "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces,type=bind",
+    // "workspaceFolder": "/workspaces"
+ }
