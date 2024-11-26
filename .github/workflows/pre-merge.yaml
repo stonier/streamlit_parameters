@@ -1,0 +1,64 @@
+name: pre-merge
+
+on:
+  push:
+    branches: [ devel ]
+  pull_request:
+    branches: [ devel ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.10"]
+        include:
+          - python-version: "3.8"
+            python-py-version: "py38"
+          - python-version: "3.10"
+            python-py-version: "py310"
+    container: ghcr.io/${{ github.repository }}:${{ matrix.python-py-version }}-poetry-bullseye
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}    
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Python Version
+        run: python3 --version
+      - name: Poetry Venv Dir
+        run: |
+          echo "VENV_DIR=$(poetry config virtualenvs.path)" >> $GITHUB_ENV
+
+      - name: Restore the Cache
+        id: cache-deps
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.VENV_DIR }}
+          # bump the suffix if you need to force-refresh the cache
+          key: streamlit-parameters-cache-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock', '**/tox.ini') }}-1
+
+      # Install all deps, sans the project (--no-root)
+      - name: Poetry - Install Dependencies
+        run: poetry install --no-interaction --no-root
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+
+      # Project is installed separately to avoid always invalidating the cache
+      - name: Poetry - Install Project
+        run: poetry install --no-interaction
+      - name: Tox - Tests [py38]
+        # fast this time around since the last step did the installation, venv.bash will only check here
+        run: |
+          source ./venv.bash
+          tox -e py38
+
+      - name: Tox - Tests
+        run: poetry run tox --workdir ${{ env.VENV_DIR }} -e ${{ matrix.python-py-version }}
+
+      - name: Tox - Formatters, Linters
+        run: poetry run tox --workdir ${{ env.VENV_DIR }} -e check
+
+      - name: Froody
+        run: echo I am froody, you should be too

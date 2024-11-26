@@ -13,9 +13,10 @@
 ##############################################################################
 
 import datetime
-import dateutil.parser
 from distutils import util
-from typing import Callable, Any, List, Tuple
+from typing import Any, Callable, List, Tuple
+
+import dateutil.parser
 
 import streamlit
 
@@ -32,6 +33,7 @@ def _convert_list_or_tuple(values, to_str=str):
 # Data Structures
 ##############################################################################
 
+
 class Parameter(object):
     """Stores default, current and metadata about a parameter."""
 
@@ -40,7 +42,7 @@ class Parameter(object):
         key: str,
         default: Any,
         touched: bool = False,
-        to_str: Callable[[Any], str] = str
+        to_str: Callable[[Any], str] = str,
     ):
         """
         Initialise the parameter with defaults, state and metadata.
@@ -272,9 +274,12 @@ class Parameters(object):
                 key=key,
                 default=(parts[0], parts[1]),
                 touched=True,
-                to_str=_convert_list_or_tuple)
+                to_str=_convert_list_or_tuple,
+            )
         except KeyError:
-            parameter = Parameter(key=key, default=default_value, to_str=_convert_list_or_tuple)
+            parameter = Parameter(
+                key=key, default=default_value, to_str=_convert_list_or_tuple
+            )
         streamlit.session_state._parameters[key] = parameter
 
     @staticmethod
@@ -340,9 +345,7 @@ class Parameters(object):
             return
         try:
             parameter = Parameter(
-                key=key,
-                default=Parameters._fetch_url_field(key),
-                touched=True
+                key=key, default=Parameters._fetch_url_field(key), touched=True
             )
         except KeyError:
             parameter = Parameter(key=key, default=default_value)
@@ -405,14 +408,16 @@ class Parameters(object):
             parameter = Parameter(
                 key=key,
                 default=dateutil.parser.parse(Parameters._fetch_url_field(key)).date(),
-                touched=True
+                touched=True,
             )
         except KeyError:
             parameter = Parameter(key=key, default=default_value)
         streamlit.session_state._parameters[key] = parameter
 
     @staticmethod
-    def register_date_range_parameter(key: str, default_value: Tuple[datetime.date, datetime.date]):
+    def register_date_range_parameter(
+        key: str, default_value: Tuple[datetime.date, datetime.date]
+    ):
         """
         Register a date range type parameter.
 
@@ -435,9 +440,7 @@ class Parameters(object):
         try:
             s = Parameters._fetch_url_field(key)
             parameter = Parameter(
-                key=key,
-                default=s.lower() in ["true", "yes"],
-                touched=True
+                key=key, default=s.lower() in ["true", "yes"], touched=True
             )
         except KeyError:
             parameter = Parameter(key=key, default=default_value)
@@ -506,3 +509,5 @@ class Parameters(object):
         """
         # TODO: raise error if multiple values in the query_string exist
         return streamlit.query_params[key]
+            0
+        ]  # always a list, get the first

@@ -12,9 +12,7 @@
 # Imports
 ##############################################################################
 
-from . import demos  # noqa
-from . import hello  # noqa
-from . import parameters  # noqa
+from . import demos, hello, parameters  # noqa  # noqa  # noqa
 
 ##############################################################################
 # Version
